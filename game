@@ -1,0 +1,172 @@
+package bullscows;
+
+import java.util.*;
+
+public class Main {
+    static int turn;
+    static Scanner scanner = new Scanner(System.in);
+    public static void main(String[] args) {
+
+
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Please, enter the secret code's length:");
+        try {
+
+
+            int length = scanner.nextInt();
+
+
+            
+            System.out.println("Input the number of possible symbols in the code:");
+            
+            int dlina = scanner.nextInt();
+            
+            check(length, dlina);
+            String a = possible(dlina);
+
+            stars(length);
+
+            String[] key = a.split("");
+            alphabet(dlina);
+
+            System.out.println("Okay, let's start a game!");
+           
+            turn = 1;
+
+
+            Bull(length, key);
+
+        } catch (InputMismatchException e) {
+            System.out.println("Error: " + e + " isn't a valid number.");
+        }
+
+
+
+    }
+
+    public static void Bull(int length, String [] key) {
+        //Turn
+
+        System.out.println("Turn " + turn + ":");
+        turn++;
+
+        String value = scanner.nextLine();
+        String[] arr = value.split("");
+
+        int cows = 0;
+        int bulls = 0;
+        
+        for (int i = 0; i < arr.length; i++) {
+            for (int j = 0; j < arr.length; j++) {
+                if (arr[i].equals(key[j])) {
+                    cows++;
+                    if (arr[i].equals(key[i])) {
+                        cows--;
+                        bulls++;
+                    }
+                }
+            }
+        }
+        Vivod(cows, bulls, key, length);
+
+
+    }
+
+    public static void Vivod(int cows, int bulls, String[] key, int length) {
+        boolean pro = true;
+        while (pro) {
+
+            if (cows == 0 && bulls == 0) {
+                System.out.println("Grade: None.");
+                Bull(length, key);
+            } else if (cows == 0 && bulls > 0) {
+                //проверка
+                if (bulls == length) {
+                    System.out.println("Grade: " + bulls + " bulls");
+                    System.out.println("Congratulations! You guessed the secret code.");
+                    //здесь должен выходить из цикла
+                    System.exit(0);
+                    break;
+                } else {
+                    System.out.println("Grade: " + bulls + " bulls");
+                    Bull(length, key);
+                }
+                break;
+            } else if (cows > 0 && bulls == 0) {
+                System.out.println("Grade: " + cows + " cows");
+                Bull(length, key);
+            } else if (cows == 1 && bulls == 1) {
+                System.out.println("Grade: " + bulls + " bull and " + cows + " cow");
+                Bull(length, key);
+            } else if (bulls > 1 && cows > 1) {
+                System.out.println("Grade: " + bulls + " bulls and " + cows + " cows");
+                Bull(length, key);
+            } else if (bulls > 1 && cows == 1) {
+                System.out.println("Grande: " + bulls + " bulls and " + cows + " cow");
+                Bull(length, key);
+            } else if (bulls == 1 && cows > 1) {
+                System.out.println("Grande: " + bulls + " bull and " + cows + " cows");
+                Bull(length, key);
+            }
+
+        }
+    }
+
+    public static  String possible(int dlina) {
+
+        var result = new StringBuilder();
+
+        List<Character> fullList = new ArrayList<>(List.of('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a',
+                'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't','u',
+                'v',  'w',  'x', 'y', 'z'));
+
+        for (int i = 0; i < dlina - 1; i++) {
+            result.append(fullList.get(i));
+        }
+
+        Collections.shuffle(fullList);
+
+        for (int i = 0; i < fullList.size(); i++) {
+            for (int j = 0; j < dlina; j++) {
+                result.append(fullList.get(i));
+            }
+        }
+
+        return result.toString();
+    }
+
+    public static void stars(int length) {
+        System.out.print("The secret is prepared: ");
+        for (int i = 0; i < length; i++) {
+            System.out.print("*");
+        }
+    }
+
+    public  static void alphabet(int length) {
+
+        String abc = "0123456789abcdefghijklmnopqrstuvwxyz";
+
+        String [] key = abc.split("");
+
+        if (length < 10) {
+            System.out.println(" (" + key[0] + "-" + key[length - 1] + ")");
+        } else if (length == 11){
+            System.out.println(" (" + key[0] + "-" + key[10] + ", " + key[length - 1] + ")");
+        } else {
+            System.out.println(" (" + key[0] + "-" + key[10] + ", " + key[11] + "-" + key[length - 1] + ")");
+        }
+    }
+
+    public static void check(int length, int dlina) {
+        if (length > dlina) {
+            System.out.println("Error: it's not possible to generate a code with a length of "+ length + " with " + dlina + " unique symbols.");
+            System.exit(0);
+        }  else if (length < 1) {
+            System.out.println("Error");
+            System.exit(0);
+        } else if (dlina > 36) {
+            System.out.println("Error: maximum number of possible symbols in the code is 36 (0-9, a-z).");
+            System.exit(0);
+        }
+    }
+}
